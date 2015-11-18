@@ -4,7 +4,7 @@ namespace Flexo.Test
 {
 
     [IntegrationTest.DynamicTest( "Flexo.FlexoGameObjectTests" )]
-    public class it_can_add_new_components_to_the_generated_object_using__and__method : MonoBehaviour
+    public class it_can_add_new_components_to_the_generated_object_using_the__and__method : MonoBehaviour
     {
 
         GameObject game_object;
