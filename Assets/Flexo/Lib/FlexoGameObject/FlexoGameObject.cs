@@ -61,6 +61,8 @@ namespace Flexo
         {
             GameObject prefab = PrefabUtility.CreatePrefab( path, gameObject, ReplacePrefabOptions.Default );
 
+            GameObject.Destroy( gameObject );
+
             return prefab;
         }
 
