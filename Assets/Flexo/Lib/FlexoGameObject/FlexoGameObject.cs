@@ -60,9 +60,7 @@ namespace Flexo
         public GameObject AsPrefab ( string path )
         {
             GameObject prefab = PrefabUtility.CreatePrefab( path, gameObject, ReplacePrefabOptions.Default );
-
             GameObject.Destroy( gameObject );
-
             return prefab;
         }
 
@@ -74,7 +72,6 @@ namespace Flexo
         public FlexoGameObject Called ( string name )
         {
             focusedGameObject.name = name;
-
             return this;
         }
 
@@ -86,7 +83,6 @@ namespace Flexo
         public FlexoGameObject WithParent ( GameObject parent )
         {
             gameObject.transform.parent = parent.transform;
-
             return this;
         }
 
@@ -99,7 +95,21 @@ namespace Flexo
         public FlexoGameObject With<T>() where T : MonoBehaviour
         {
             focusedGameObject.AddComponent<T>();
+            return this;
+        }
 
+
+        /// <summary>
+        /// Adds the provided component type to the generated game object, and also
+        /// returns a reference to the newly created component.
+        /// </summary>
+        /// <typeparam name="T">the type of component to add</typeparam>
+        /// <param name="reference">a reference to the component will be copied here</param>
+        /// <returns>reference to self</returns>
+        public FlexoGameObject With<T>( out T reference ) where T : MonoBehaviour
+        {
+            focusedGameObject.AddComponent<T>();
+            reference = focusedGameObject.GetComponent<T>();
             return this;
         }
         
@@ -120,9 +130,35 @@ namespace Flexo
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns>reference to self</returns>
+        public FlexoGameObject And<T>( out T reference ) where T : MonoBehaviour
+        {
+            With<T>();
+            reference = focusedGameObject.GetComponent<T>();
+            return this;
+        }
+
+
+        /// <summary>
+        /// Alias for <see cref="With"/> method.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns>reference to self</returns>
         public FlexoGameObject Has<T>() where T : MonoBehaviour
         {
             return With<T>();
+        }
+
+
+        /// <summary>
+        /// Alias for <see cref="With"/> method.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns>reference to self</returns>
+        public FlexoGameObject Has<T>( out T reference ) where T : MonoBehaviour
+        {
+            With<T>();
+            reference = focusedGameObject.GetComponent<T>();
+            return this;
         }
 
 
@@ -134,8 +170,22 @@ namespace Flexo
         public FlexoGameObject WithChild ( string name )
         {
             GameObject child = new GameObject( name );
-
             child.transform.parent = gameObject.transform;
+            return this;
+        }
+
+
+        /// <summary>
+        /// Attaches multiple children to the generated game object at one time.
+        /// </summary>
+        /// <param name="names">The names of the children to be added</param>
+        /// <returns>reference to self</returns>
+        public FlexoGameObject WithChildren ( params string[] names )
+        {
+            foreach ( string name in names )
+            {
+                WithChild( name );
+            }
 
             return this;
         }
