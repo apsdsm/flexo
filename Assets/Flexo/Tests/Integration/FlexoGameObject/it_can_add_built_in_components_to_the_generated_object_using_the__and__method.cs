@@ -4,7 +4,7 @@ namespace Flexo.Test
 {
 
     [IntegrationTest.DynamicTest( "Flexo.FlexoGameObjectTests" )]
-    public class it_can_add_new_components_to_the_generated_object : MonoBehaviour
+    public class it_can_add_built_in_components_to_generated_object_using_the__and__method : MonoBehaviour
     {
 
         GameObject game_object;
@@ -13,15 +13,15 @@ namespace Flexo.Test
         // setup
         void Awake ()
         {
-            flexo = new FlexoGameObject().With<TestComponent>();
+            flexo = new FlexoGameObject().And<Rigidbody>();
         }
 
         // test
         void Update ()
         {
-            TestComponent component = flexo.GameObject.GetComponent<TestComponent>();
+            Rigidbody rigidbody = flexo.GameObject.GetComponent<Rigidbody>();
 
-            IntegrationTest.Assert( component != null, "expected component, but found null" );
+            IntegrationTest.Assert( rigidbody != null, "expected component, but found null" );
             IntegrationTest.Pass();
         }
 

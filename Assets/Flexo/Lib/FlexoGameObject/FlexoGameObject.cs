@@ -86,18 +86,16 @@ namespace Flexo
             return this;
         }
 
-
         /// <summary>
         /// Adds the provided component type to the generated game object.
         /// </summary>
         /// <typeparam name="T">the type of component to add</typeparam>
         /// <returns>reference to self</returns>
-        public FlexoGameObject With<T>() where T : MonoBehaviour
+        public FlexoGameObject With<T>() where T : Component
         {
             focusedGameObject.AddComponent<T>();
             return this;
         }
-
 
         /// <summary>
         /// Adds the provided component type to the generated game object, and also
@@ -106,7 +104,7 @@ namespace Flexo
         /// <typeparam name="T">the type of component to add</typeparam>
         /// <param name="reference">a reference to the component will be copied here</param>
         /// <returns>reference to self</returns>
-        public FlexoGameObject With<T>( out T reference ) where T : MonoBehaviour
+        public FlexoGameObject With<T>( out T reference ) where T : Component
         {
             focusedGameObject.AddComponent<T>();
             reference = focusedGameObject.GetComponent<T>();
@@ -119,7 +117,7 @@ namespace Flexo
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns>reference to self</returns>
-        public FlexoGameObject And<T>() where T : MonoBehaviour
+        public FlexoGameObject And<T>() where T : Component
         {
             return With<T>();
         }
@@ -130,7 +128,7 @@ namespace Flexo
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns>reference to self</returns>
-        public FlexoGameObject And<T>( out T reference ) where T : MonoBehaviour
+        public FlexoGameObject And<T>( out T reference ) where T : Component
         {
             With<T>();
             reference = focusedGameObject.GetComponent<T>();
@@ -143,7 +141,7 @@ namespace Flexo
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns>reference to self</returns>
-        public FlexoGameObject Has<T>() where T : MonoBehaviour
+        public FlexoGameObject Has<T>() where T : Component
         {
             return With<T>();
         }
@@ -154,7 +152,7 @@ namespace Flexo
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns>reference to self</returns>
-        public FlexoGameObject Has<T>( out T reference ) where T : MonoBehaviour
+        public FlexoGameObject Has<T>( out T reference ) where T : Component
         {
             With<T>();
             reference = focusedGameObject.GetComponent<T>();
