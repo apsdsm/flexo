@@ -31,53 +31,150 @@ Next, make sure you're using the `Flexo` namespace in your source.
 
 Finally, create your object using Flexo's collection of generation methods. Flexo will return a game object when it's done generating, so you can implicitly cast the new object to a declared `GameObject`.
 
-Here are some examples until I get more docs up:
+Flexo is a tool that provides greater returns the more complex your use case. If you just want to make a game object, then it's not that much more expensive than just calling `new GameObject` but you incur a few casts and references being bounced around.
 
-### Simple object with name
+For more complex use cases, like objects with multiple children where each child has different components and you want references to those components, you can save significantly on your typing by using Flexo.
+
+## Examples
+
+Here are a few examples of what you can do with Flexo:
+
+### Create a simple named object
+
+Simple objects don't get much returns from using Flexo.
 
 ```
-GameObject object = Flexo.GameObject( "Foo" );
+GameObject foo = new FlexoGameObject( "Foo" );
 ```
 
-### Simple object with previously defined parent
+is equivalent to:
 
 ```
-GameObject parent = new GameObject();
+GameObject foo = new GameObject( "Foo" );
+```
+
+### Create an object with a previously defined parent
+
+You can parent a flexo object to a previously created game object.
+
+```
+GameObject foo = new FlexoGameObject( "Foo" );
+
+GameObject bar = new FlexoGameObject( "Bar" ).WithParent( parent );
+```
+
+is equivalent to:
+
+```
+GameObject parent = new GameObject( "Parent" );
+
+GameObejct child = new GameObejct( "Child" );
+
+child.transform.parent = parent.transform;
+
+```
+
+### Crete an object with components
+
+You can tell Flexo to add components to your game objects while they're being created (you can add either your own Monobehaviours or built in components like Unity's `RigidBody`).
+
+```
+GameObject foo = new FlexoGameObject( "Foo" )
+                     .With<ComponentA>()
+                     .And<ComponentB>();
+```
+
+is equivalent to:
+
+```
+GameObject foo = new GameObject( "Foo" );
+
+foo.AddComponent<ComponentA>;
+foo.AddComponent<ComponentB>;
+```
+
+### Get back references to the components you just added
+
+If you want to get a reference to the components you added, you can ask for them while constructing the object.
+
+```
+ComponentA componentA;
+ComponentB componentB;
+
+GameObject foo = new FlexoGameObject( "Foo" )
+                     .With<ComponentA>( out componentA )
+                     .And<ComponentB>( out componentB );
+```
+
+is equivalent to:
+
+```
+GameObject foo = new GameObject( "Foo" );
+
+foo.AddComponent<ComponentA>;
+foo.AddComponent<ComponentB>;
+
+ComponentA componentA = foo.getComponent<ComponentA>;
+ComponentB componentB = foo.getComponent<ComponentB>;
+```
+
+### Create an object with multiple children
+
+```
+GameObject foo = new FlexoGameObject( "Foo" ).WithChildren( "Bar", "Baz" );
+```
+
+is equivalent to:
+
+```
+GameObject foo = new GameObject( "Foo" );
+GameObject bar = new GameObejct( "Bar" );
+GameObject baz = new GameObejct( "Baz" );
+
+bar.transform.parent = foo.transform;
+baz.transform.parent = baz.transform;
+```
+
+### Create an object with multiple children, where children have components, and get references to those components
+
+```
+ComponentA componentA;
+ComponentB componentB;
+ComponentC componentC;
 
 GameObject object = Flexo.GameObject( "Foo" )
-                         .WithParent( parent );
-```
-
-### Object with components (MonoBehaviours)
-
-```
-GameObject object = Flexo.GameObject( "Foo" )
-                         .With<ComponentA>()
-                         .And<ComponentB>();
-```
-
-### Object with children
-
-```
-GameObject object = Flexo.GameObject( "Foo" )
-                         .WithChild( "Bar" )
-                         .WithChild( "Baz" );
-```
-
-### Object with children, where children have components
-
-```
-GameObject object = Flexo.GameObject( "Foo" )
-                         .WithChild( "Bar" )
-                         .WithChild( "Baz" )
+                         .WithChildren( "Bar", "Baz" )
                          .Where( "Bar" )
-                         .Has<ComponentA>()
-                         .And<ComponentB>()
+                         .Has<ComponentA>( out componentA )
+                         .And<ComponentB>( out componentB )
                          .Where( "Baz" )
-                         .Has<ComponentC>();
+                         .Has<ComponentC>( out componentC );
 ```
 
-### Object written to disk as a prefab
+is equivalent to:
+
+```
+GameObject foo = new GameObject( "Foo" );
+GameObject bar = new GameObejct( "Bar" );
+GameObject baz = new GameObejct( "Baz" );
+
+bar.transform.parent = foo.transform;
+baz.transform.parent = baz.transform;
+
+bar.addComponent<ComponentA>();
+bar.addComponent<ComponentB>();
+
+ComponentA componentA = bar.getComponent<ComponentA>();
+ComponentB componentB = bar.getComponent<ComponentB>();
+
+baz.addComponent<ComponentC>();
+
+ComponentC componentC = baz.getComponent<ComponentC>();
+```
+
+### Write an object to the file system as a prefab
+
+You can also write any game object you create to the file system as a prefab, but remember that its your own responsibility to create a valid path and to destroy the prefab when it isn't needed any more. This can be useful when you want to test what happens when an object is created with all its children already attached, or if you just want to make prefabs.
 
 ```
 GameObject prefab = Flexo.GameObject( "Foo" )
